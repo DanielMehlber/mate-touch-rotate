@@ -1,0 +1,9 @@
+[Unit]
+Description=Writes current orientation of device to /dev/orientation.txt (needed for touch-screen-rotator)
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/opt/mate-touch-rotate/device-rotation-writer.sh

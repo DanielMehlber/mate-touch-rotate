@@ -1,0 +1,9 @@
+[Unit]
+Description=Touchscreen rotator for convertible laptops (requires device-orientation-updater)
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/opt/mate-touch-rotate/device-rotation-listener.sh
