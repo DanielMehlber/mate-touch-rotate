@@ -6,4 +6,4 @@ WantedBy=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/opt/mate-touch-rotate/device-rotation-writer.sh
+ExecStart=/bin/bash /opt/mate-touch-rotate/device-rotation-writer.sh
