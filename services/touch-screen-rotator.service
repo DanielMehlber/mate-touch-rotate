@@ -2,8 +2,10 @@
 Description=Touchscreen rotator for convertible laptops (requires device-orientation-updater)
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=xorg.target
+
 
 [Service]
+Environment="DISPLAY=:0.0"
 Type=simple
 ExecStart=/bin/bash /opt/mate-touch-rotate/device-rotation-listener.sh
