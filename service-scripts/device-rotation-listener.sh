@@ -1,4 +1,6 @@
+XDISPLAY=$(xrandr --current | grep primary | sed -e 's/ .*//g')
 
+echo "Display name is $XDISPLAY" | tee /home/danielmehlber/Documents/testlog.txt
 
 TOUCHPAD='Synaptics TM3319-001'
 TOUCHSCREEN='pointer:04F3224A:00 04F3:24FE'
@@ -11,14 +13,14 @@ while true
 do
     # wait for changes in file storing the current rotation
     inotifywait -e modify /dev/orientation.txt
-    echo "File change detected" | sudo tee -a /dev/orientationslog.txt
+    echo "File change detected" | tee -a /home/danielmehlber/Documents/testlog.txt
     
     # get last line of file (must be parsed in order to receive orientation)
     currentorientation=$(tail -1 /dev/orientation.txt)
-    echo "This is the current line: $currentorientation" | sudo tee -a /dev/orientationslog.txt
+    echo "This is the current line: $currentorientation" | tee -a /home/danielmehlber/Documents/testlog.txt
     
     # clear file
-    echo "" | tee /dev/orientation.txt
+    # echo "" | tee /dev/orientation.txt
     
     # parse orientation
     case "$currentorientation" in
@@ -35,12 +37,12 @@ do
             currentorientation="left"
         ;;
         *)
-            echo "Current line is not a orientation - Skipped" | sudo tee -a /dev/orientationslog.txt
+            echo "Current line is not a orientation - Skipped" | tee -a /home/danielmehlber/Documents/testlog.txt
             continue
         ;;
     esac
     
-    echo "This is the orientation: $currentorientation" | sudo tee -a /dev/orientationslog.txt
+    echo "This is the orientation: $currentorientation" | tee -a /home/danielmehlber/Documents/testlog.txt
     
     # set variable currentorientation as $1
     set -- $currentorientation
@@ -79,10 +81,10 @@ do
       esac
     }
 
-    XDISPLAY=`sudo xrandr --current | grep primary | sed -e 's/ .*//g'`
+    XDISPLAY=`xrandr --current | grep primary | sed -e 's/ .*//g'`
     
     
-    echo "do rotate on $XDISPLAY to $1"
+    echo "do rotate on $XDISPLAY to $1" | tee -a /home/danielmehlber/Documents/testlog.txt
     do_rotate $XDISPLAY $1
 
   

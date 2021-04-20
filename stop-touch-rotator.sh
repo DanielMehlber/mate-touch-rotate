@@ -1,2 +1,2 @@
 sudo systemctl stop device-orientation-updater
-sudo systemctl stop touch-screen-rotator
+systemctl --user stop touch-screen-rotator
