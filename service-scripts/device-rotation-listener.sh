@@ -1,10 +1,6 @@
 # purpose: started by systemd
 # listens for changes in orientation file at /dev/orientation.txt and applies them
 
-TOUCHSCREEN=$1
-TOUCHPAD=$2
-
-echo "Using TOUCHSCREEN=$TOUCHSCREEN and TOUCHPAD=$TOUCHPAD"
 
 # wait for modification of the orientation file.
 while true
@@ -43,30 +39,37 @@ do
     function do_rotate
     {
       xrandr --output $XDISPLAY --rotate $currentorientation
-        echo "DEVICE=$TOUCHSCREEN"
+  
       TRANSFORM='Coordinate Transformation Matrix'
         
       case "$currentorientation" in
         normal)
           echo "rotate to normal"
-          [ "$TOUCHPAD" != "None" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 1 0 0 0 1 0 0 0 1
-          [ "$TOUCHSCREEN" != "None" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 1 0 0 0 1 0 0 0 1
+          for var in "$@"
+            do
+            [ "$var" != "None" ]    && xinput set-prop "$var"  "$TRANSFORM" 1 0 0 0 1 0 0 0 1
+          done 
           ;;
         inverted)
           echo "rotate to inverted"
-          [ "$TOUCHPAD" != "None" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
-          [ "$TOUCHSCREEN" != "None" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
+          for var in "$@"
+            do
+            [ "$var" != "None" ]    && xinput set-prop "$var"  "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
+          done 
           ;;
         left)
           echo "rotate to left"
-          [ "$TOUCHPAD" != "None" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
-          [ "$TOUCHSCREEN" != "None" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
+          for var in "$@"
+            do
+            [ "$var" != "None" ]    && xinput set-prop "$var"  "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
+          done 
           ;;
         right)
           echo "rotate to right"
-          [ "$TOUCHPAD" != "None" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
-          [ "$TOUCHPAD" != "None" ] && echo "right matrix"
-          [ "$TOUCHSCREEN" != "None" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
+          for var in "$@"
+            do
+            [ "$var" != "None" ]    && xinput set-prop "$var"  "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
+          done 
           ;;
         *)
           echo "Error: orientataion not recognized!"
