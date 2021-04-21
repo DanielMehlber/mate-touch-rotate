@@ -30,15 +30,21 @@ sudo mkdir "/opt/mate-touch-rotate"
 echo "Copying files to installation directory..."
 sudo cp $PWD/start-touch-rotator.sh $PWD/stop-touch-rotator.sh $PWD/service-scripts/device-rotation-writer.sh $PWD/service-scripts/device-rotation-listener.sh $PWD/env.sh $PWD/UNINSTALL.sh "/opt/mate-touch-rotate/"
 
-# configure env.sh
-echo "Configurating env.sh..."
-echo "TOUCHSCREEN=$1" | sudo tee -a /opt/mate-touch-rotate/env.sh
-echo "TOUCHPAD=$2" | sudo tee -a /opt/mate-touch-rotate/env.sh
 
 # move service files to systemd directory
 echo "Copying files to systemd user directory..."
 sudo cp $PWD/services/touch-screen-rotator.service /etc/systemd/user
 sudo cp $PWD/services/device-orientation-updater.service /etc/systemd/system
+
+# configure Environment of service to set touchscreen and touchpad
+echo "Configurating service..."
+echo "ENVIRONMENT=TOUCHSCREEN='$1'" | sudo tee -a /etc/systemd/user/touch-screen-rotator.service
+echo "ENVIRONMENT=TOUCHPAD='$2'" | sudo tee -a /etc/systemd/user/touch-screen-rotator.service
+echo "ExecStart=/bin/bash /opt/mate-touch-rotate/device-rotation-listener.sh '${1}' '${2}'"  | sudo tee -a /etc/systemd/user/touch-screen-rotator.service
+
+#configure env.sh
+echo "export TOUCHSCREEN='$1'" | sudo tee -a /opt/mate-touch-rotate/env.sh
+echo "export TOUCHPAD='$2'" | sudo tee -a /opt/mate-touch-rotate/env.sh
 
 # enable systemd services
 echo "Enabling service..."

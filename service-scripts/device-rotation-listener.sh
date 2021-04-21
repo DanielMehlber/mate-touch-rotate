@@ -1,7 +1,10 @@
 # purpose: started by systemd
 # listens for changes in orientation file at /dev/orientation.txt and applies them
 
-source ./env.sh # contains TOUCHSCREEN and TOUCHPAD
+TOUCHSCREEN=$1
+TOUCHPAD=$2
+
+echo "Using TOUCHSCREEN=$TOUCHSCREEN and TOUCHPAD=$TOUCHPAD"
 
 # wait for modification of the orientation file.
 while true
@@ -11,7 +14,8 @@ do
     
     # get last line of file (must be parsed in order to receive orientation)
     currentorientation=$(tail -1 /dev/orientation.txt)
-
+    # get display name
+    XDISPLAY=`xrandr --current | grep primary | sed -e 's/ .*//g'`
     
     # clear file
     # echo "" | tee /dev/orientation.txt
@@ -35,45 +39,43 @@ do
         ;;
     esac
     
-    # set variable currentorientation as $1
-    set -- $currentorientation
-    
-    if [ -z "$1" ]; then
-      echo "Missing orientation."
-      echo "Usage: $0 [normal|inverted|left|right] [revert_seconds]"
-      echo
-      exit 1
-    fi
 
     function do_rotate
     {
-      xrandr --output $1 --rotate $2
-
+      xrandr --output $XDISPLAY --rotate $currentorientation
+        echo "DEVICE=$TOUCHSCREEN"
       TRANSFORM='Coordinate Transformation Matrix'
-
-      case "$2" in
+        
+      case "$currentorientation" in
         normal)
-          [ ! -z "$TOUCHPAD" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 1 0 0 0 1 0 0 0 1
-          [ ! -z "$TOUCHSCREEN" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 1 0 0 0 1 0 0 0 1
+          echo "rotate to normal"
+          [ "$TOUCHPAD" != "None" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 1 0 0 0 1 0 0 0 1
+          [ "$TOUCHSCREEN" != "None" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 1 0 0 0 1 0 0 0 1
           ;;
         inverted)
-          [ ! -z "$TOUCHPAD" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
-          [ ! -z "$TOUCHSCREEN" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
+          echo "rotate to inverted"
+          [ "$TOUCHPAD" != "None" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
+          [ "$TOUCHSCREEN" != "None" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
           ;;
         left)
-          [ ! -z "$TOUCHPAD" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
-          [ ! -z "$TOUCHSCREEN" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
+          echo "rotate to left"
+          [ "$TOUCHPAD" != "None" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
+          [ "$TOUCHSCREEN" != "None" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
           ;;
         right)
-          [ ! -z "$TOUCHPAD" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
-          [ ! -z "$TOUCHSCREEN" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
+          echo "rotate to right"
+          [ "$TOUCHPAD" != "None" ]    && xinput set-prop "$TOUCHPAD"    "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
+          [ "$TOUCHPAD" != "None" ] && echo "right matrix"
+          [ "$TOUCHSCREEN" != "None" ] && xinput set-prop "$TOUCHSCREEN" "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
+          ;;
+        *)
+          echo "Error: orientataion not recognized!"
           ;;
       esac
     }
 
-    XDISPLAY=`xrandr --current | grep primary | sed -e 's/ .*//g'`
     
-    do_rotate $XDISPLAY $1
+    do_rotate
 
   
 done
