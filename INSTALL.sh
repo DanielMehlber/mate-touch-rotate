@@ -27,7 +27,7 @@ echo "Configurating service..."
 echo "ExecStart=/bin/bash /opt/mate-touch-rotate/device-rotation-listener.sh $DEVICES"  | sudo tee -a /etc/systemd/user/touch-screen-rotator.service
 
 #configure env.sh
-echo "export DEVICES=$DEVICES" | sudo tee -a /opt/mate-touch-rotate/env.sh
+echo "export DEVICES=\"$DEVICES\"" | sudo tee -a /opt/mate-touch-rotate/env.sh
 
 # enable systemd services
 echo "Enabling service..."
@@ -35,6 +35,7 @@ systemctl --user enable touch-screen-rotator.service
 sudo systemctl enable device-orientation-updater.service
 
 # install inotifywait
+echo "Installing inotify-tools..."
 sudo apt install inotify-tools
 
 source $PWD/env.sh

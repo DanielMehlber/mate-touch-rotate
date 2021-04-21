@@ -31,6 +31,7 @@ do
             currentorientation="left"
         ;;
         *)
+            echo "event skipped -- no change in orientation"
             continue
         ;;
     esac
@@ -44,31 +45,27 @@ do
         
       case "$currentorientation" in
         normal)
-          echo "rotate to normal"
-          for var in "$@"
+          for dev in "$@";
             do
-            [ "$var" != "None" ]    && xinput set-prop "$var"  "$TRANSFORM" 1 0 0 0 1 0 0 0 1
+            [ "$dev" != "None" ]    && xinput set-prop "$dev"  "$TRANSFORM" 1 0 0 0 1 0 0 0 1
           done 
           ;;
         inverted)
-          echo "rotate to inverted"
-          for var in "$@"
+          for dev in "$@";
             do
-            [ "$var" != "None" ]    && xinput set-prop "$var"  "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
+            [ "$dev" != "None" ]    && xinput set-prop "$dev"  "$TRANSFORM" -1 0 1 0 -1 1 0 0 1
           done 
           ;;
         left)
-          echo "rotate to left"
-          for var in "$@"
+          for dev in "$@"; 
             do
-            [ "$var" != "None" ]    && xinput set-prop "$var"  "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
+            [ "$dev" != "None" ]    && xinput set-prop "$dev"  "$TRANSFORM" 0 -1 1 1 0 0 0 0 1
           done 
           ;;
         right)
-          echo "rotate to right"
-          for var in "$@"
+          for dev in "$@";
             do
-            [ "$var" != "None" ]    && xinput set-prop "$var"  "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
+            [ "$dev" != "None" ]    && xinput set-prop "$dev"  "$TRANSFORM" 0 1 0 -1 0 1 0 0 1
           done 
           ;;
         *)
@@ -78,7 +75,7 @@ do
     }
 
     
-    do_rotate
+    do_rotate "$@"
 
   
 done
