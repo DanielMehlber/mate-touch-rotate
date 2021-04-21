@@ -5,14 +5,16 @@ Systemd service to identify orientation of device in order to rotate display, to
 Just run INSTALL.sh like this:
 
 ```
-source ./INSTALL.sh [TOUCHSCREEN_NAME] [TOUCHPAD NAME]
+source ./INSTALL.sh [DEVICES]
 ```
 
-You can find out the name of your devices by using
+You can find out the names or ids of your devices by using
 
 ```
 xinput --list
 ```
+These could be touchscreens, touchpads, pens, erasers (sometimes addressed by a different device).
+Pass their full name or id.
 
 ### What the installation is doing
 * necessary files will be copies into /opt/mate-touch-rotate (privileges needed)
